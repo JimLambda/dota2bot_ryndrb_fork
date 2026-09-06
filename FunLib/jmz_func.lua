@@ -59,6 +59,10 @@ J.Role = require( GetScriptDirectory()..'/FunLib/aba_role' )
 J.Skill = require( GetScriptDirectory()..'/FunLib/aba_skill' )
 J.Chat = require( GetScriptDirectory()..'/FunLib/aba_chat' )
 
+-- 个人配置（FunLib/my_lineup.lua）。文件缺失或写错时静默跳过，不影响原逻辑
+local bHasMyLineup, MyLineup = pcall( require, GetScriptDirectory()..'/FunLib/my_lineup' )
+if not bHasMyLineup then MyLineup = nil end
+
 
 if bDebugTeam
 then
@@ -94,6 +98,19 @@ function J.SetUserHeroInit( nAbilityBuildList, nTalentBuildList, sBuyList, sSell
 			end
 		end
 
+	end
+
+	-- 个人出装覆盖：只对 FunLib/my_lineup.lua 里手动指定的英雄生效
+	-- 加点和天赋不在这里动，仍然保持 BotLib/hero_xxx.lua 里的原始配置
+	if MyLineup ~= nil
+	and MyLineup.GetItemBuild ~= nil
+	then
+		local tOverride = MyLineup.GetItemBuild( bot:GetUnitName(), GetTeam() )
+		if tOverride ~= nil
+		then
+			if tOverride.buy_list  ~= nil then sBuyList  = tOverride.buy_list  end
+			if tOverride.sell_list ~= nil then sSellList = tOverride.sell_list end
+		end
 	end
 
 	return nAbilityBuildList, nTalentBuildList, sBuyList, sSellList

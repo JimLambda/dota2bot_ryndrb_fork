@@ -12,18 +12,18 @@ local bLaneAssignActive = true
 local bLineupReserve = false
 
 --======================== 手动指定阵容 ========================
--- 打开后，下表里填了英雄的位置会直接被选中；留 nil 的位置仍走原来的自动选人逻辑
-local bForceLineup = false
--- 只作用于某一队；填 TEAM_RADIANT / TEAM_DIRE，填 nil 则两队都生效
-local nForceLineupTeam = TEAM_RADIANT
--- 按位置填英雄代码名：1=优势路大哥 2=中单 3=劣势路 4=游走辅助 5=硬辅
-local tForceLineup = {
-	[1] = nil, -- 'npc_dota_hero_antimage',
-	[2] = nil, -- 'npc_dota_hero_zuus',
-	[3] = nil, -- 'npc_dota_hero_axe',
-	[4] = nil, -- 'npc_dota_hero_lion',
-	[5] = nil, -- 'npc_dota_hero_crystal_maiden',
-}
+-- 配置统一放在 FunLib/my_lineup.lua，改那里就行，这里不用动。
+-- 规则：填了英雄的位置直接选中并套用专属出装；留 nil 的位置走原来的自动选人 + 默认出装。
+local bHasMyLineup, MyLineup = pcall( require, GetScriptDirectory()..'/FunLib/my_lineup' )
+if not bHasMyLineup
+then
+	MyLineup = nil
+	print( '[my_lineup] 未加载（文件不存在或语法错误），跳过手动阵容，全部走默认逻辑' )
+end
+
+local bForceLineup     = MyLineup ~= nil and MyLineup.bForceLineup == true
+local nForceLineupTeam = MyLineup ~= nil and MyLineup.nForceLineupTeam or nil
+local tForceLineup     = MyLineup ~= nil and MyLineup.tForceLineup or {}
 --==============================================================
 
 require(GetScriptDirectory()..'/API/api_global')
