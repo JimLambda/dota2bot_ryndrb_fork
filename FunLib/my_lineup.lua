@@ -26,6 +26,12 @@ X.nForceLineupTeam = TEAM_RADIANT
 -- 设成 false 就恢复原版行为。
 X.bGlyphWithHuman = true
 
+-- 开符文的激进度：
+--   'normal'  原版：只有敌方英雄正在打塔 / 近战兵营 / 遗迹时才开
+--   'creep'   小兵 / 召唤物 / 攻城车在打建筑也算（纯小兵推塔也会开）
+--   'panic'   在 creep 基础上再放宽：塔 <55%、兵营和遗迹 <75%，且远程兵营也算
+X.sGlyphAggression = 'panic'
+
 -- 手动阵容：按位置填英雄代码名
 -- 1 = 优势路大哥   2 = 中单   3 = 劣势路   4 = 游走辅助   5 = 硬辅
 -- 不需要指定的位置保持 nil，那个位置就会走原来的自动选人

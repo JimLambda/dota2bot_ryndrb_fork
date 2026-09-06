@@ -7780,6 +7780,41 @@ function X.IsFirstBotOfTeam()
 	return false
 end
 
+-- 建筑是否正在被攻击。bCountCreeps 为 true 时敌方小兵 / 召唤物 / 攻城车也算
+function X.IsBuildingUnderAttack( building, bCountCreeps )
+
+	if building == nil or building:IsNull() then return false end
+
+	-- 敌方英雄
+	local heroList = GetUnitList( UNIT_LIST_ENEMY_HEROES )
+	for _, hero in pairs( heroList )
+	do
+		if J.IsValidHero( hero )
+		and GetUnitToUnitDistance( building, hero ) <= hero:GetAttackRange() + 200
+		and hero:GetAttackTarget() == building
+		then
+			return true
+		end
+	end
+
+	if not bCountCreeps then return false end
+
+	-- 敌方小兵 / 召唤物 / 攻城车
+	local nEnemyCreeps = building:GetNearbyCreeps( 1000, true )
+	for _, creep in pairs( nEnemyCreeps )
+	do
+		if creep ~= nil
+		and not creep:IsNull()
+		and creep:IsAlive()
+		and creep:GetAttackTarget() == building
+		then
+			return true
+		end
+	end
+
+	return false
+end
+
 local function UseGlyph()
 
 	if GetGlyphCooldown( ) > 0
@@ -7806,6 +7841,19 @@ local function UseGlyph()
 		end
 	end
 
+	-- 激进程度，见 FunLib/my_lineup.lua 的 sGlyphAggression
+	local sAggro = 'normal'
+	if MyLineup ~= nil and MyLineup.sGlyphAggression ~= nil
+	then sAggro = MyLineup.sGlyphAggression end
+
+	local bCountCreeps = ( sAggro == 'creep' or sAggro == 'panic' )
+	local bPanic       = ( sAggro == 'panic' )
+
+	-- 触发的血量阈值
+	local fTowerHP   = bPanic and 0.55 or 0.36
+	local fRaxHP     = bPanic and 0.75 or 0.50
+	local fAncientHP = bPanic and 0.75 or 0.50
+
 	local T1 = {
 		TOWER_TOP_1,
 		TOWER_MID_1,
@@ -7824,9 +7872,9 @@ local function UseGlyph()
 	do
 		local tower = GetTower( GetTeam(), t )
 		if tower ~= nil and tower:GetHealth() > 0
-			and tower:GetHealth() / tower:GetMaxHealth() < 0.36
+			and tower:GetHealth() / tower:GetMaxHealth() < fTowerHP
 			and tower:CanBeSeen()
-			and X.IsTargetedByEnemy(tower)
+			and X.IsBuildingUnderAttack( tower, bCountCreeps )
 		then
 			bot:ActionImmediate_Glyph( )
 			return
@@ -7834,18 +7882,31 @@ local function UseGlyph()
 	end
 
 
-	local MeleeBarrack = {
+	-- 原版只看近战兵营，panic 模式连远程兵营一起算
+	local tBarrack = {
 		BARRACKS_TOP_MELEE,
 		BARRACKS_MID_MELEE,
 		BARRACKS_BOT_MELEE
 	}
 
-	for _, b in pairs( MeleeBarrack )
+	if bPanic
+	then
+		tBarrack = {
+			BARRACKS_TOP_MELEE,
+			BARRACKS_TOP_RANGED,
+			BARRACKS_MID_MELEE,
+			BARRACKS_MID_RANGED,
+			BARRACKS_BOT_MELEE,
+			BARRACKS_BOT_RANGED
+		}
+	end
+
+	for _, b in pairs( tBarrack )
 	do
 		local barrack = GetBarracks( GetTeam(), b )
 		if barrack ~= nil and barrack:GetHealth() > 0
-			and barrack:GetHealth() / barrack:GetMaxHealth() < 0.5
-			and X.IsTargetedByEnemy( barrack )
+			and barrack:GetHealth() / barrack:GetMaxHealth() < fRaxHP
+			and X.IsBuildingUnderAttack( barrack, bCountCreeps )
 		then
 			bot:ActionImmediate_Glyph( )
 			return
@@ -7854,8 +7915,8 @@ local function UseGlyph()
 
 	local Ancient = GetAncient( GetTeam() )
 	if Ancient ~= nil and Ancient:GetHealth() > 0
-		and Ancient:GetHealth() / Ancient:GetMaxHealth() < 0.5
-		and X.IsTargetedByEnemy( Ancient )
+		and Ancient:GetHealth() / Ancient:GetMaxHealth() < fAncientHP
+		and X.IsBuildingUnderAttack( Ancient, bCountCreeps )
 	then
 		bot:ActionImmediate_Glyph( )
 		return
