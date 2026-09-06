@@ -19,6 +19,10 @@ local bDeafaultAbilityHero = BotBuild['bDeafaultAbility']
 local bDeafaultItemHero = BotBuild['bDeafaultItem']
 local sAbilityLevelUpList = BotBuild['sSkillList']
 
+-- 个人配置（FunLib/my_lineup.lua）。文件缺失或写错时静默跳过，不影响原逻辑
+local bHasMyLineup, MyLineup = pcall( require, GetScriptDirectory()..'/FunLib/my_lineup' )
+if not bHasMyLineup then MyLineup = nil end
+
 local bRefreshMorphlingBuild = false
 local refreshList = false
 
@@ -7759,17 +7763,47 @@ local function DisruptTeleport(hUnit)
 	return false
 end
 
+-- 只让队里第一个 bot 负责开符文，避免多个 bot 抢着开
+function X.IsFirstBotOfTeam()
+
+	local hBot = GetBot()
+	local nIDs = GetTeamPlayers( GetTeam() )
+
+	for i = 1, #nIDs
+	do
+		if IsPlayerBot( nIDs[i] )
+		then
+			return hBot:GetPlayerID() == nIDs[i]
+		end
+	end
+
+	return false
+end
+
 local function UseGlyph()
 
 	if GetGlyphCooldown( ) > 0
 		or DotaTime() < 60
-		or bot ~= GetTeamMember( 1 )
-		or not GetTeamMember( 2 ):IsBot()
-		or not GetTeamMember( 3 ):IsBot()
-		or not GetTeamMember( 4 ):IsBot()
-		or not GetTeamMember( 5 ):IsBot()
+		or not X.IsFirstBotOfTeam()
 	then
 		return
+	end
+
+	-- 原逻辑：队里只要有人类就不开符文（怕抢了真人的符文）
+	-- 想让有真人在场时也开，把 FunLib/my_lineup.lua 里的 bGlyphWithHuman 设成 true
+	if MyLineup == nil
+	or MyLineup.bGlyphWithHuman ~= true
+	then
+		for i = 1, 5
+		do
+			local hMember = GetTeamMember( i )
+			if hMember ~= nil
+			and hMember ~= GetBot()
+			and not hMember:IsBot()
+			then
+				return
+			end
+		end
 	end
 
 	local T1 = {
