@@ -41,9 +41,14 @@ X.tForceLineup = {
 -- }
 
 -- 专属出装：按英雄代码名索引
+--   base_pos  : 可选，见下方说明
 --   buy_list  : 出装顺序，从前往后买（必须写 item_xxx 内部名）
 --   sell_list : 两两成对 {要卖掉的, 一旦有了它就卖}，可以不写
 -- 只有上面 tForceLineup 里登记过的英雄才会生效
+--
+-- 关于 base_pos：有的英雄在某个位置根本没有构建（例如骷髅王只有 pos_1 / pos_3，
+-- 没有 pos_4）。硬把它放到没有构建的位置，该英雄的脚本会直接报错，结果是一件
+-- 装备都不买。这时填 base_pos 让它借用别的位置的加点和天赋，出装仍用你这套。
 X.tItemBuilds = {
     ['npc_dota_hero_bristleback'] = {
 		buy_list = {
@@ -169,6 +174,29 @@ function X.GetItemBuild( sHeroName, nTeam )
 		if X.tForceLineup[pos] == sHeroName
 		then
 			return X.tItemBuilds[sHeroName]
+		end
+	end
+
+	return nil
+end
+
+-- 判断某个英雄是否要借用其它位置的加点和天赋（base_pos），不需要则返回 nil
+function X.GetBasePos( sHeroName, nTeam )
+
+	if not X.bForceLineup then return nil end
+
+	if X.nForceLineupTeam ~= nil
+	and X.nForceLineupTeam ~= nTeam
+	then
+		return nil
+	end
+
+	for pos = 1, 5
+	do
+		if X.tForceLineup[pos] == sHeroName
+		then
+			local tBuild = X.tItemBuilds[sHeroName]
+			if tBuild ~= nil then return tBuild.base_pos end
 		end
 	end
 

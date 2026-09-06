@@ -1348,7 +1348,19 @@ function Item.GetTheItemSolt( bot, nSlotMin, nSlotMax, bMaxCost )
 end
 
 
+-- 个人配置（FunLib/my_lineup.lua）。文件缺失或写错时静默跳过，不影响原逻辑
+local bHasMyLineup, MyLineup = pcall( require, GetScriptDirectory()..'/FunLib/my_lineup' )
+if not bHasMyLineup then MyLineup = nil end
+
 function Item.GetRoleItemsBuyList( bot )
+
+	-- 手动指定的英雄可以借用其它位置的加点和天赋，见 my_lineup.lua 的 base_pos
+	if MyLineup ~= nil
+	and MyLineup.GetBasePos ~= nil
+	then
+		local sBasePos = MyLineup.GetBasePos( bot:GetUnitName(), GetTeam() )
+		if sBasePos ~= nil then return sBasePos end
+	end
 
 	local sRole = {
 		[1] = 'pos_2',

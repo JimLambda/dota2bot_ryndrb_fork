@@ -104,12 +104,24 @@ end
 
 function X.GetRandomBuild( tBuildList )
 
+	if tBuildList == nil or #tBuildList == 0 then return {} end
+
 	return tBuildList[RandomInt( 1, #tBuildList )]
 
 end
 
 
 function X.GetTalentBuild( tTalentTreeList )
+
+	-- 有些英雄在某些位置没有构建（空表），不能让它把整个购买脚本搞崩
+	if tTalentTreeList == nil
+	or tTalentTreeList['t10'] == nil
+	or tTalentTreeList['t15'] == nil
+	or tTalentTreeList['t20'] == nil
+	or tTalentTreeList['t25'] == nil
+	then
+		return {}
+	end
 
 	local nTalentBuildList = {
 							[1] = ( tTalentTreeList['t10'][1] == 0 and 1 or 2 ),
