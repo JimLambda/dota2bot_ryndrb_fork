@@ -40,15 +40,17 @@ X.tForceLineup = {
 --     'npc_dota_hero_skeleton_king'
 -- }
 
+-- 自动兜底：手动指定的英雄如果在那个位置没有构建（例如骷髅王没有 pos_4），
+-- 自动在 1~5 号位里随机挑一个它有构建的位置，用那套加点和天赋。
+-- 出装仍然用下面 tItemBuilds 里你写的这套，不受影响。
+-- 想自己指定借用哪个位置，就给该英雄填 base_pos（优先级高于自动兜底）。
+X.bAutoBasePos = true
+
 -- 专属出装：按英雄代码名索引
---   base_pos  : 可选，见下方说明
+--   base_pos  : 可选。手动指定借用哪个位置的加点和天赋，填了就不走自动兜底
 --   buy_list  : 出装顺序，从前往后买（必须写 item_xxx 内部名）
 --   sell_list : 两两成对 {要卖掉的, 一旦有了它就卖}，可以不写
 -- 只有上面 tForceLineup 里登记过的英雄才会生效
---
--- 关于 base_pos：有的英雄在某个位置根本没有构建（例如骷髅王只有 pos_1 / pos_3，
--- 没有 pos_4）。硬把它放到没有构建的位置，该英雄的脚本会直接报错，结果是一件
--- 装备都不买。这时填 base_pos 让它借用别的位置的加点和天赋，出装仍用你这套。
 X.tItemBuilds = {
     ['npc_dota_hero_bristleback'] = {
 		buy_list = {
@@ -158,47 +160,43 @@ X.tItemBuilds = {
 	-- },
 }
 
--- 判断某个英雄是否被手动指定，是则返回它的专属出装，否则返回 nil
-function X.GetItemBuild( sHeroName, nTeam )
+-- 某个英雄是否被手动指定过（在 tForceLineup 里登记过）
+function X.IsForcedHero( sHeroName, nTeam )
 
-	if not X.bForceLineup then return nil end
+	if not X.bForceLineup then return false end
 
 	if X.nForceLineupTeam ~= nil
 	and X.nForceLineupTeam ~= nTeam
 	then
-		return nil
+		return false
 	end
 
 	for pos = 1, 5
 	do
 		if X.tForceLineup[pos] == sHeroName
 		then
-			return X.tItemBuilds[sHeroName]
+			return true
 		end
 	end
 
-	return nil
+	return false
 end
 
--- 判断某个英雄是否要借用其它位置的加点和天赋（base_pos），不需要则返回 nil
+-- 专属出装：只有被手动指定的英雄才会生效
+function X.GetItemBuild( sHeroName, nTeam )
+
+	if not X.IsForcedHero( sHeroName, nTeam ) then return nil end
+
+	return X.tItemBuilds[sHeroName]
+end
+
+-- 要借用哪个位置的加点和天赋：填了 base_pos 就用它，没填返回 nil（交给自动兜底）
 function X.GetBasePos( sHeroName, nTeam )
 
-	if not X.bForceLineup then return nil end
+	if not X.IsForcedHero( sHeroName, nTeam ) then return nil end
 
-	if X.nForceLineupTeam ~= nil
-	and X.nForceLineupTeam ~= nTeam
-	then
-		return nil
-	end
-
-	for pos = 1, 5
-	do
-		if X.tForceLineup[pos] == sHeroName
-		then
-			local tBuild = X.tItemBuilds[sHeroName]
-			if tBuild ~= nil then return tBuild.base_pos end
-		end
-	end
+	local tBuild = X.tItemBuilds[sHeroName]
+	if tBuild ~= nil then return tBuild.base_pos end
 
 	return nil
 end

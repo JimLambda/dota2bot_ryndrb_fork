@@ -1354,14 +1354,6 @@ if not bHasMyLineup then MyLineup = nil end
 
 function Item.GetRoleItemsBuyList( bot )
 
-	-- 手动指定的英雄可以借用其它位置的加点和天赋，见 my_lineup.lua 的 base_pos
-	if MyLineup ~= nil
-	and MyLineup.GetBasePos ~= nil
-	then
-		local sBasePos = MyLineup.GetBasePos( bot:GetUnitName(), GetTeam() )
-		if sBasePos ~= nil then return sBasePos end
-	end
-
 	local sRole = {
 		[1] = 'pos_2',
 		[2] = 'pos_3',
@@ -1382,6 +1374,102 @@ function Item.GetRoleItemsBuyList( bot )
 	
 	return 'pos_1'
 
+end
+
+-- ===== 手动阵容：借用其它位置的加点和天赋（见 FunLib/my_lineup.lua）=====
+
+-- 探测某个位置的构建时，临时指定要加载的位置
+local sForcedRole = nil
+
+-- 保留上面的原始实现
+local fGetRoleItemsBuyListOrigin = Item.GetRoleItemsBuyList
+
+-- 重新加载一次英雄文件，看它在指定位置有没有真正的构建
+function Item.HasUsableBuild( sHeroName, sPos )
+
+	sForcedRole = sPos
+
+	local bOK, Build = pcall( dofile, GetScriptDirectory().."/BotLib/"..string.gsub( sHeroName, "npc_dota_", "" ) )
+
+	sForcedRole = nil
+
+	if not bOK or type( Build ) ~= 'table' then return false end
+
+	-- 只能看加点和天赋：sBuyList 可能已被 my_lineup 的出装覆盖，不能作为判断依据
+	local tSkillList = Build['sSkillList']
+	if tSkillList ~= nil
+	then
+		for i = 1, #tSkillList
+		do
+			if tSkillList[i] ~= nil
+			and tSkillList[i].name ~= nil
+			then
+				return true
+			end
+		end
+	end
+
+	return false
+end
+
+-- 在 sDefaultRole 没有构建时，从 1~5 号位里随机挑一个有构建的；本来就够用则返回 nil
+function Item.FindUsableRole( sHeroName, sDefaultRole )
+
+	if Item.HasUsableBuild( sHeroName, sDefaultRole ) then return nil end
+
+	local tOrder = { 1, 2, 3, 4, 5 }
+	for i = 5, 2, -1
+	do
+		local j = RandomInt( 1, i )
+		tOrder[i], tOrder[j] = tOrder[j], tOrder[i]
+	end
+
+	for i = 1, 5
+	do
+		local sPos = 'pos_'..tOrder[i]
+		if sPos ~= sDefaultRole
+		and Item.HasUsableBuild( sHeroName, sPos )
+		then
+			print( '[my_lineup] '..sHeroName..' 在 '..sDefaultRole..' 没有构建，改用 '..sPos..' 的加点和天赋' )
+			return sPos
+		end
+	end
+
+	print( '[my_lineup] 警告：'..sHeroName..' 在任何一个位置都没有构建，加点和天赋会空着' )
+	return nil
+end
+
+function Item.GetRoleItemsBuyList( bot )
+
+	-- 探测时直接返回临时指定的位置
+	if sForcedRole ~= nil
+	then
+		local sTemp = sForcedRole
+		sForcedRole = nil
+		return sTemp
+	end
+
+	local sRole = fGetRoleItemsBuyListOrigin( bot )
+
+	if MyLineup ~= nil
+	and MyLineup.IsForcedHero ~= nil
+	and MyLineup.IsForcedHero( bot:GetUnitName(), GetTeam() )
+	then
+		local sBasePos = nil
+
+		-- 优先用手动指定的 base_pos
+		if MyLineup.GetBasePos ~= nil
+		then sBasePos = MyLineup.GetBasePos( bot:GetUnitName(), GetTeam() ) end
+
+		-- 没指定就自动找一个有构建的位置
+		if sBasePos == nil
+		and MyLineup.bAutoBasePos == true
+		then sBasePos = Item.FindUsableRole( bot:GetUnitName(), sRole ) end
+
+		if sBasePos ~= nil then return sBasePos end
+	end
+
+	return sRole
 end
 
 function Item.GetItemWardSolt()
