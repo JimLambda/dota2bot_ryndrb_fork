@@ -15,7 +15,7 @@
 local X = {}
 
 -- 总开关：false 时整个文件不生效，一切照旧
-X.bForceLineup = false
+X.bForceLineup = true
 
 -- 只作用于某一队。TEAM_RADIANT / TEAM_DIRE；填 nil 则两队都生效
 X.nForceLineupTeam = TEAM_RADIANT
@@ -24,18 +24,105 @@ X.nForceLineupTeam = TEAM_RADIANT
 -- 1 = 优势路大哥   2 = 中单   3 = 劣势路   4 = 游走辅助   5 = 硬辅
 -- 不需要指定的位置保持 nil，那个位置就会走原来的自动选人
 X.tForceLineup = {
-	[1] = nil, -- 'npc_dota_hero_antimage',
-	[2] = nil, -- 'npc_dota_hero_zuus',
-	[3] = nil, -- 'npc_dota_hero_axe',
-	[4] = nil, -- 'npc_dota_hero_lion',
-	[5] = nil, -- 'npc_dota_hero_crystal_maiden',
+	[1] = 'npc_dota_hero_bristleback', -- 'npc_dota_hero_antimage',
+	[2] = 'npc_dota_hero_shredder', -- 'npc_dota_hero_zuus',
+	[3] = 'npc_dota_hero_abaddon', -- 'npc_dota_hero_axe',
+	[4] = 'npc_dota_hero_skeleton_king', -- 'npc_dota_hero_lion',
+	[5] = 'npc_dota_hero_centaur', -- 'npc_dota_hero_crystal_maiden',
 }
+
+-- tanky heroes
+-- X.tTankyHeroes = {
+-- 	'npc_dota_hero_bristleback',
+-- 	'npc_dota_hero_shredder',
+-- 	'npc_dota_hero_centaur',
+-- 	'npc_dota_hero_abaddon',
+--     'npc_dota_hero_skeleton_king'
+-- }
 
 -- 专属出装：按英雄代码名索引
 --   buy_list  : 出装顺序，从前往后买（必须写 item_xxx 内部名）
 --   sell_list : 两两成对 {要卖掉的, 一旦有了它就卖}，可以不写
 -- 只有上面 tForceLineup 里登记过的英雄才会生效
 X.tItemBuilds = {
+    ['npc_dota_hero_bristleback'] = {
+		buy_list = {
+            "item_boots_of_bearing",
+            "item_crimson_guard",
+            "item_shivas_guard",
+            "item_assault",
+            "item_aghanims_shard",
+            "item_ultimate_scepter",
+            "item_sphere",
+            "item_ultimate_scepter_2",
+            "item_lotus_orb",
+            "item_moon_shard",
+		}
+	},
+
+    ['npc_dota_hero_shredder'] = {
+		buy_list = {
+            "item_guardian_greaves",
+            "item_bloodstone",
+            "item_pipe",
+            "item_wind_waker",
+            "item_shivas_guard",
+            "item_aghanims_shard",
+            "item_ultimate_scepter",
+            "item_ultimate_scepter_2",
+            "item_lotus_orb",
+            "item_moon_shard",
+		}
+	},
+
+    ['npc_dota_hero_abaddon'] = {
+		buy_list = {
+            "item_boots",
+            "item_vladmir",
+            "item_pipe",
+            "item_skadi",
+            "item_radiance",
+            "item_aghanims_shard",
+            "item_ultimate_scepter",
+            "item_travel_boots_2",
+            "item_ultimate_scepter_2",
+            "item_assault",
+            "item_moon_shard",
+		}
+	},
+
+    ['npc_dota_hero_skeleton_king'] = {
+		buy_list = {
+            "item_boots",
+            "item_crimson_guard",
+            "item_desolator",
+            "item_radiance",
+            "item_assault",
+            "item_aghanims_shard",
+            "item_ultimate_scepter",
+            "item_travel_boots_2",
+            "item_ultimate_scepter_2",
+            "item_bloodthorn",
+            "item_moon_shard",
+		}
+	},
+
+    ['npc_dota_hero_centaur'] = {
+		buy_list = {
+            "item_boots",
+            "item_crimson_guard",
+            "item_pipe",
+            "item_shivas_guard",
+            "item_lotus_orb",
+            "item_aghanims_shard",
+            "item_ultimate_scepter",
+            "item_travel_boots_2",
+            "item_ultimate_scepter_2",
+            "item_radiance",
+            "item_moon_shard",
+		}
+	},
+
 	-- 例子（去掉注释即可用）：
 	-- ['npc_dota_hero_antimage'] = {
 	-- 	buy_list = {
