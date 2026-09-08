@@ -18,7 +18,8 @@ local X = {}
 X.bForceLineup = true
 
 -- 只作用于某一队。TEAM_RADIANT / TEAM_DIRE；填 nil 则两队都生效
-X.nForceLineupTeam = TEAM_RADIANT
+-- X.nForceLineupTeam = TEAM_RADIANT
+X.nForceLineupTeam = nil
 
 -- 让 bots 自己开防御符文（Glyph）。
 -- 原版逻辑是「队里只要有一个真人就完全不开」，怕抢了真人的符文。
