@@ -37,11 +37,18 @@ X.sGlyphAggression = 'panic'
 -- 1 = 优势路大哥   2 = 中单   3 = 劣势路   4 = 游走辅助   5 = 硬辅
 -- 不需要指定的位置保持 nil，那个位置就会走原来的自动选人
 X.tForceLineup = {
-	[1] = 'npc_dota_hero_bristleback', -- 'npc_dota_hero_antimage',
-	[2] = 'npc_dota_hero_shredder', -- 'npc_dota_hero_zuus',
-	[3] = 'npc_dota_hero_abaddon', -- 'npc_dota_hero_axe',
-	[4] = 'npc_dota_hero_skeleton_king', -- 'npc_dota_hero_lion',
-	[5] = 'npc_dota_hero_centaur', -- 'npc_dota_hero_crystal_maiden',
+	-- tank heroes
+	-- [1] = 'npc_dota_hero_bristleback', -- 'npc_dota_hero_antimage',
+	-- [2] = 'npc_dota_hero_shredder', -- 'npc_dota_hero_zuus',
+	-- [3] = 'npc_dota_hero_abaddon', -- 'npc_dota_hero_axe',
+	-- [4] = 'npc_dota_hero_skeleton_king', -- 'npc_dota_hero_lion',
+	-- [5] = 'npc_dota_hero_centaur', -- 'npc_dota_hero_crystal_maiden',
+
+	[1] = 'npc_dota_hero_medusa', -- 'npc_dota_hero_antimage',
+	[2] = 'npc_dota_hero_luna', -- 'npc_dota_hero_zuus',
+	[3] = 'npc_dota_hero_sniper', -- 'npc_dota_hero_axe',
+	[4] = 'npc_dota_hero_drow_ranger', -- 'npc_dota_hero_lion',
+	[5] = 'npc_dota_hero_templar_assassin', -- 'npc_dota_hero_crystal_maiden',
 }
 
 -- tanky heroes
