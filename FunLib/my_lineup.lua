@@ -150,69 +150,88 @@ X.tItemBuilds = {
 		}
 	},
 
-	-- ===== 远程阵容（当前使用）：每项 8 件，纯大件 =====
+	-- ===== 远程阵容（当前使用）=====
+	-- 结构（和上面五套坦克完全同构，共 11 条）：
+	--   item_boots 起步 → 4 件大件 → 魔晶 / 神杖 → 飞鞋2 → 神杖祝福 → 第 5 件大件 → 月神碎片
+	-- 不占格子：魔晶、神杖、神杖祝福、月神碎片
+	-- 最终占格子 6 件：飞鞋2 + 5 件大件
 
     ['npc_dota_hero_medusa'] = {
 		buy_list = {
-            "item_power_treads",
+            "item_boots",
             "item_manta",
             "item_skadi",
             "item_butterfly",
+            "item_satanic",
             "item_aghanims_shard",
             "item_ultimate_scepter",
+            "item_travel_boots_2",
             "item_ultimate_scepter_2",
+            "item_bloodthorn",
             "item_moon_shard",
 		}
 	},
 
     ['npc_dota_hero_luna'] = {
 		buy_list = {
-            "item_power_treads",
+            "item_boots",
             "item_manta",
             "item_butterfly",
+            "item_greater_crit",
             "item_satanic",
             "item_aghanims_shard",
             "item_ultimate_scepter",
+            "item_travel_boots_2",
             "item_ultimate_scepter_2",
+            "item_bloodthorn",
             "item_moon_shard",
 		}
 	},
 
     ['npc_dota_hero_sniper'] = {
 		buy_list = {
-            "item_power_treads",
-            "item_hurricane_pike",
+            "item_boots",
+            "item_hydras_breath",
             "item_mjollnir",
             "item_greater_crit",
+            "item_monkey_king_bar",
             "item_aghanims_shard",
             "item_ultimate_scepter",
+            "item_travel_boots_2",
             "item_ultimate_scepter_2",
+            "item_bloodthorn",
             "item_moon_shard",
 		}
 	},
 
     ['npc_dota_hero_drow_ranger'] = {
 		buy_list = {
-            "item_power_treads",
-            "item_hurricane_pike",
+            "item_boots",
+            "item_hydras_breath",
             "item_greater_crit",
             "item_butterfly",
+            "item_satanic",
             "item_aghanims_shard",
             "item_ultimate_scepter",
+            "item_travel_boots_2",
             "item_ultimate_scepter_2",
+            "item_bloodthorn",
             "item_moon_shard",
 		}
 	},
 
     ['npc_dota_hero_templar_assassin'] = {
 		buy_list = {
-            "item_phase_boots",
+            "item_boots",
             "item_desolator",
-            "item_black_king_bar",
             "item_greater_crit",
+            "item_butterfly",
+            "item_satanic",
             "item_aghanims_shard",
             "item_ultimate_scepter",
+            "item_travel_boots_2",
             "item_ultimate_scepter_2",
+            "item_abyssal_blade",
             "item_moon_shard",
 		}
 	},
