@@ -150,6 +150,73 @@ X.tItemBuilds = {
 		}
 	},
 
+	-- ===== 远程阵容（当前使用）：每项 8 件，纯大件 =====
+
+    ['npc_dota_hero_medusa'] = {
+		buy_list = {
+            "item_power_treads",
+            "item_manta",
+            "item_skadi",
+            "item_butterfly",
+            "item_aghanims_shard",
+            "item_ultimate_scepter",
+            "item_ultimate_scepter_2",
+            "item_moon_shard",
+		}
+	},
+
+    ['npc_dota_hero_luna'] = {
+		buy_list = {
+            "item_power_treads",
+            "item_manta",
+            "item_butterfly",
+            "item_satanic",
+            "item_aghanims_shard",
+            "item_ultimate_scepter",
+            "item_ultimate_scepter_2",
+            "item_moon_shard",
+		}
+	},
+
+    ['npc_dota_hero_sniper'] = {
+		buy_list = {
+            "item_power_treads",
+            "item_hurricane_pike",
+            "item_mjollnir",
+            "item_greater_crit",
+            "item_aghanims_shard",
+            "item_ultimate_scepter",
+            "item_ultimate_scepter_2",
+            "item_moon_shard",
+		}
+	},
+
+    ['npc_dota_hero_drow_ranger'] = {
+		buy_list = {
+            "item_power_treads",
+            "item_hurricane_pike",
+            "item_greater_crit",
+            "item_butterfly",
+            "item_aghanims_shard",
+            "item_ultimate_scepter",
+            "item_ultimate_scepter_2",
+            "item_moon_shard",
+		}
+	},
+
+    ['npc_dota_hero_templar_assassin'] = {
+		buy_list = {
+            "item_phase_boots",
+            "item_desolator",
+            "item_black_king_bar",
+            "item_greater_crit",
+            "item_aghanims_shard",
+            "item_ultimate_scepter",
+            "item_ultimate_scepter_2",
+            "item_moon_shard",
+		}
+	},
+
 	-- 例子（去掉注释即可用）：
 	-- ['npc_dota_hero_antimage'] = {
 	-- 	buy_list = {
